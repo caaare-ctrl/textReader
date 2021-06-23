@@ -11,20 +11,23 @@ import PyPDF2
 from playsound import playsound
 mp3_fp = BytesIO()
 
+def readText(filename):
+    text = ""
+    pdf = open(filename, "rb")
+    pdfReader = PyPDF2.PdfFileReader(pdf)
+    pageNum = pdfReader.numPages
+    for i in range(pageNum):
+        pageObj = pdfReader.getPage(i)
+        text += pageObj.extractText()
+    audio = gTTS(text=text.strip(), lang='en', tld="co.uk")
+    audio.save("result.mp3")
+    playsound("result.mp3")
 
 def UploadAction():
-    text = ""
     filename = filedialog.askopenfilename(title="Upload Your PDF File")
     if filename:
-        pdf = open(filename,"rb")
-        pdfReader = PyPDF2.PdfFileReader(pdf)
-        pageNum = pdfReader.numPages
-        for i in range(pageNum):
-            pageObj = pdfReader.getPage(i)
-            text += pageObj.extractText()
-        audio = gTTS(text=text.strip(), lang= 'en', tld="co.uk")
-        audio.save("result.mp3")
-        playsound("result.mp3")
+        root.destroy()
+        readText(filename)
 
 root = tk.Tk()
 root.title("Welcome to PDF Text Reader!")
